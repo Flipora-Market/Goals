@@ -4,28 +4,174 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Task Tracker</title>
-    <meta name="theme-color" content="#4361ee">
+    <meta name="theme-color" content="#6366F1">
     <meta name="description" content="Track your daily tasks with this PWA">
     <link rel="manifest" href="manifest.json" crossorigin="use-credentials">
     <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-tasks"></i> Daily Task Tracker</h1>
-            <div class="date-display" id="currentDate"></div>
-            <button id="installBtn" class="install-btn" style="display: none;">
-                <i class="fas fa-download"></i> Install App
-            </button>
-        </header>
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-tasks"></i> TaskTrack</h1>
+            </div>
+            <div class="sidebar-menu">
+                <button class="menu-item active">
+                    <i class="fas fa-home"></i> Dashboard
+                </button>
+                <button class="menu-item">
+                    <i class="fas fa-calendar-alt"></i> Calendar
+                </button>
+                <button class="menu-item">
+                    <i class="fas fa-chart-pie"></i> Analytics
+                </button>
+                <button class="menu-item">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </div>
+            <div class="sidebar-footer">
+                <button id="installBtn" class="install-btn" style="display: none;">
+                    <i class="fas fa-download"></i> Install App
+                </button>
+            </div>
+        </div>
 
-        <!-- ... (rest of your HTML remains the same) ... -->
+        <div class="main-content">
+            <div class="header">
+                <div class="date-navigation">
+                    <button id="prevDayBtn" class="nav-btn"><i class="fas fa-chevron-left"></i></button>
+                    <div class="date-display" id="currentDate"></div>
+                    <button id="nextDayBtn" class="nav-btn"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=User&background=6366F1&color=fff" alt="User">
+                </div>
+            </div>
+
+            <div class="content-container">
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="totalTasks">0</span>
+                            <span class="stat-label">Total Tasks</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="completedTasks">0</span>
+                            <span class="stat-label">Completed</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-info">
+                            <span class="stat-number" id="pendingTasks">0</span>
+                            <span class="stat-label">Pending</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-input-container">
+                    <div class="input-group">
+                        <input type="text" id="taskInput" placeholder="What needs to be done?">
+                        <button id="addTaskBtn" class="primary-btn">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    <div class="input-options">
+                        <select id="prioritySelect">
+                            <option value="low">Low Priority</option>
+                            <option value="medium" selected>Medium Priority</option>
+                            <option value="high">High Priority</option>
+                        </select>
+                        <select id="repeatSelect">
+                            <option value="none">No Repeat</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="task-filters">
+                    <button class="filter-btn active" data-filter="all">All Tasks</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="completed">Completed</button>
+                    <button class="filter-btn" data-filter="high">High Priority</button>
+                </div>
+
+                <div class="task-list-container">
+                    <div class="task-list-header">
+                        <h3>Today's Tasks</h3>
+                        <div class="sort-options">
+                            <span>Sort by:</span>
+                            <select id="sortSelect">
+                                <option value="priority">Priority</option>
+                                <option value="date">Date Added</option>
+                                <option value="name">Task Name</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="task-list" id="taskList">
+                        <!-- Tasks will be added here dynamically -->
+                    </div>
+
+                    <div class="empty-state" id="emptyState">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4076/4076478.png" alt="No tasks">
+                        <h3>No Tasks Found</h3>
+                        <p>Add a new task to get started!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- ... (modal and toast elements remain the same) ... -->
+    <!-- Edit Task Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Edit Task</h2>
+            <input type="text" id="editTaskInput">
+            <div class="modal-options">
+                <div class="option-group">
+                    <label>Priority</label>
+                    <select id="editPrioritySelect">
+                        <option value="low">Low Priority</option>
+                        <option value="medium">Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                </div>
+                <div class="option-group">
+                    <label>Repeat</label>
+                    <select id="editRepeatSelect">
+                        <option value="none">No Repeat</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button id="saveEditBtn" class="primary-btn">Save Changes</button>
+                <button id="cancelEditBtn" class="secondary-btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div class="toast" id="toast"></div>
 
     <script src="app.js"></script>
 </body>
